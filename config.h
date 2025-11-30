@@ -27,6 +27,9 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
+	/* Arc Riders */
+	{ "steam_app_1808500",  NULL,   NULL,       1 << 2,       0,            0 },
+	/* Others */
 	{ "Gimp",           NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",        NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "discord",        NULL,       NULL,       1 << 1,       0,            1 },
@@ -34,8 +37,6 @@ static const Rule rules[] = {
 	{ "Slack",          NULL,       NULL,       1 << 3,       0,            1 },
 	{ "Spotify",        NULL,       NULL,       1 << 4,       0,            1 },
 	{ "Brave-browser",  NULL,       NULL,       0,            0,            0 },
-	/* Arc Riders */
-	{ "steam_app_1808500",  NULL,   NULL,       1 << 5,       0,            0 },
 };
 
 /* layout(s) */
