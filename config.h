@@ -124,3 +124,8 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
+static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X, >1: pin systray to monitor X, systray on left side */
+static const unsigned int systrayonleft = 0;    /* 0: systray in the right corner, >0: systray on left side and status bar on right corner */
+static const unsigned int systrayspacing = 2;   /* systray spacing */
+static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+static const Bool showsystray = True;           /* False means no systray */
