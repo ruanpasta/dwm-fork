@@ -35,7 +35,8 @@ static const Rule rules[] = {
 	{ "discord",        NULL,       NULL,       1 << 1,       0,            1 },
 	{ NULL, "steamwebhelper",       NULL,       1 << 2,       0,            1 },
 	{ "Slack",          NULL,       NULL,       1 << 3,       0,            1 },
-	{ "Spotify",        NULL,       NULL,       1 << 4,       0,            1 },
+	{ "teams-for-linux",NULL,       NULL,       1 << 4,       0,            1 },
+	{ "Spotify",        NULL,       NULL,       1 << 5,       0,            1 },
 	{ "Brave-browser",  NULL,       NULL,       0,            0,            0 },
 };
 
