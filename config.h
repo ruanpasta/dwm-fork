@@ -72,7 +72,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "kitty", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
 static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
-static const char *calc[] = { "dmenu", "-C", NULL };
+static const char *calc[] = { "dmenu", "-C", "-c", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
