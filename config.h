@@ -38,6 +38,7 @@ static const Rule rules[] = {
 	{ "teams-for-linux",NULL,       NULL,       1 << 4,   0,    0,            1 },
 	{ "Spotify",        NULL,       NULL,       1 << 5,   0,    0,            1 },
 	{ "Brave-browser",  NULL,       NULL,       0,        0,    0,            0 },
+	{ "Google-chrome",  NULL,       NULL,       1 << 8,   0,    0,            1 },
 	{ "dmenu",          NULL,       NULL,       0,        1,    0,           -1 },
 };
 
