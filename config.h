@@ -39,7 +39,7 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
+	/* class      instance    title       tags mask  iscentered  isfloating   monitor */
 	/* Arc Riders */
 	{ "steam_app_1808500",  NULL,   NULL,       1 << 2,   0,    0,            0 },
 	/* Others */
@@ -53,6 +53,7 @@ static const Rule rules[] = {
 	{ "Brave-browser",  NULL,       NULL,       0,        0,    0,            0 },
 	{ "Google-chrome",  NULL,       NULL,       1 << 8,   0,    0,            1 },
 	{ "dmenu",          NULL,       NULL,       0,        1,    0,           -1 },
+	{ "theme-picker",   NULL,       NULL,       0,        1,    1,           -1 },
 };
 
 /* layout(s) */
@@ -87,6 +88,13 @@ static const char *termcmd[]  = { "kitty", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
 static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
 static const char *calc[] = { "dmenu", "-C", "-c", NULL };
+static const char *themepickercmd[] = { "kitty", "--class", "theme-picker",
+	/* remember_window_size vem ligado por padrao e ignora o initial_window_*,
+	 * abrindo a modal com o tamanho da ultima janela de kitty usada. */
+	"--override", "remember_window_size=no",
+	"--override", "initial_window_width=100c",
+	"--override", "initial_window_height=28c",
+	"-e", "theme-picker", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -94,6 +102,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_e,      spawn,          {.v = emacscmd } },
 	{ MODKEY,                       XK_c,      spawn,          {.v = calc } },
+	{ MODKEY,                       XK_w,      spawn,          {.v = themepickercmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
