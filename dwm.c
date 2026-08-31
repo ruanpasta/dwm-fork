@@ -35,6 +35,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
+#include <X11/Xresource.h>
 #include <X11/Xutil.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
@@ -156,6 +157,11 @@ typedef struct {
 	int monitor;
 } Rule;
 
+typedef struct {
+	const char *name;
+	char *dst;
+} ResourcePref;
+
 typedef struct Systray   Systray;
 struct Systray {
 	Window win;
@@ -200,6 +206,7 @@ static void grabkeys(void);
 static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
+static void loadxresources(void);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
@@ -216,6 +223,7 @@ static void resize(Client *c, int x, int y, int w, int h, int interact);
 static void resizebarwin(Monitor *m);
 static void resizeclient(Client *c, int x, int y, int w, int h);
 static void resizemouse(const Arg *arg);
+static void reloadcolors(void);
 static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void run(void);
@@ -1152,6 +1160,55 @@ killclient(const Arg *arg)
 }
 
 void
+loadxresources(void)
+{
+	Atom actual_type;
+	int actual_format;
+	unsigned long nitems, bytes_after;
+	unsigned char *prop = NULL;
+	XrmDatabase db;
+	XrmValue val;
+	char *type, name[64];
+	size_t i;
+
+	/* XResourceManagerString() returns the value cached when the display was
+	 * opened, so it would hand back stale colors on every reload after the
+	 * first. Read RESOURCE_MANAGER off the root window instead. */
+	if (XGetWindowProperty(dpy, root, XA_RESOURCE_MANAGER, 0, 16384, False,
+	                       XA_STRING, &actual_type, &actual_format, &nitems,
+	                       &bytes_after, &prop) != Success || !prop)
+		return;
+
+	XrmInitialize();
+	db = XrmGetStringDatabase((char *)prop);
+	XFree(prop);
+	if (!db)
+		return;
+
+	for (i = 0; i < LENGTH(resources); i++) {
+		snprintf(name, sizeof name, "dwm.%s", resources[i].name);
+		if (XrmGetResource(db, name, "*", &type, &val)
+		    && val.addr && val.size >= 7 && val.addr[0] == '#') {
+			memcpy(resources[i].dst, val.addr, 7);
+			resources[i].dst[7] = '\0';
+		}
+	}
+	XrmDestroyDatabase(db);
+}
+
+void
+reloadcolors(void)
+{
+	size_t i;
+
+	loadxresources();
+	for (i = 0; i < LENGTH(colors); i++) {
+		free(scheme[i]);
+		scheme[i] = drw_scm_create(drw, (const char **)colors[i], 3);
+	}
+}
+
+void
 manage(Window w, XWindowAttributes *wa)
 {
 	Client *c, *t = NULL;
@@ -1356,6 +1413,7 @@ void
 propertynotify(XEvent *e)
 {
 	Client *c;
+	Monitor *m;
 	Window trans;
 	XPropertyEvent *ev = &e->xproperty;
 
@@ -1370,7 +1428,20 @@ propertynotify(XEvent *e)
 		updatesystray();
 	}
 
-	if ((ev->window == root) && (ev->atom == XA_WM_NAME))
+	if ((ev->window == root) && (ev->atom == XA_RESOURCE_MANAGER)) {
+		reloadcolors();
+		/* focus() only repaints the border of the window losing focus, so
+		 * every other unfocused window would keep the previous theme's
+		 * border until it is touched. */
+		for (m = mons; m; m = m->next)
+			for (c = m->clients; c; c = c->next)
+				XSetWindowBorder(dpy, c->win,
+					scheme[c == selmon->sel ? SchemeSel : SchemeNorm][ColBorder].pixel);
+		focus(NULL);
+		arrange(NULL);
+		return;
+	}
+	else if ((ev->window == root) && (ev->atom == XA_WM_NAME))
 		updatestatus();
 	else if (ev->state == PropertyDelete)
 		return; /* ignore */
@@ -1729,7 +1800,6 @@ setmfact(const Arg *arg)
 void
 setup(void)
 {
-	int i;
 	XSetWindowAttributes wa;
 	Atom utf8string;
 	struct sigaction sa;
@@ -1785,8 +1855,7 @@ setup(void)
 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
 	/* init appearance */
 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
-	for (i = 0; i < LENGTH(colors); i++)
-		scheme[i] = drw_scm_create(drw, colors[i], 3);
+	reloadcolors();
 	/* init system tray */
 	updatesystray();
 	/* init bars */

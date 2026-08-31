@@ -7,15 +7,28 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "JetBrainsMono:size=16" };
 static const char dmenufont[]       = "JetBrainsMono:size=16";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
-static const char *colors[][3]      = {
+/* Mutable so load_xresources() can overwrite them at startup and on every
+ * RESOURCE_MANAGER change. dmenucmd holds pointers into these same buffers,
+ * so dmenu follows without extra work. The values below are the fallback
+ * used when no X resource is set. */
+static char col_gray1[8]            = "#222222";
+static char col_gray2[8]            = "#444444";
+static char col_gray3[8]            = "#bbbbbb";
+static char col_gray4[8]            = "#eeeeee";
+static char col_cyan[8]             = "#005577";
+static char *colors[][3]            = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+};
+
+static ResourcePref resources[] = {
+	{ "normfgcolor",     col_gray3 },
+	{ "normbgcolor",     col_gray1 },
+	{ "normbordercolor", col_gray2 },
+	{ "selfgcolor",      col_gray4 },
+	{ "selbgcolor",      col_cyan  },
+	{ "selbordercolor",  col_cyan  },
 };
 
 /* tagging */
