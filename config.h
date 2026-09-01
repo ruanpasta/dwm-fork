@@ -86,7 +86,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "kitty", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
-static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
+static const char *screenshotcmd[] = { "screenshot", NULL };
 static const char *calc[] = { "dmenu", "-C", "-c", NULL };
 static const char *themepickercmd[] = { "kitty", "--class", "theme-picker",
 	/* remember_window_size vem ligado por padrao e ignora o initial_window_*,
@@ -134,7 +134,8 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ 0,                            XK_Print,  spawn,          {.v = flameshotcmd } },
+	{ MODKEY|ShiftMask,             XK_s,      spawn,          {.v = screenshotcmd } },
+	{ 0,                            XK_Print,  spawn,          {.v = screenshotcmd } },
 };
 
 /* button definitions */
